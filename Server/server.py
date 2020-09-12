@@ -10,21 +10,10 @@ from Engine.BillzOCR import process_file
 root_folder = getcwd() + "/"
 app = Flask(__name__, root_path=root_folder, static_url_path=root_folder)
 
-def generate_html(html_template_path: str, input_values: dict):
-    html_temp = read_file(html_template_path)
-    jin_temp = jin.Template(html_temp)
-    html_rend = jin_temp.render(input_values)
-    return html_rend
 
-
-def get_json_from_request():
-    req = request
-    # return json.loads(req.get_data().decode())
-
-
-def read_file(file_path: str):
-    with open(file_path, "rb") as file:
-        return file.read()
+@app.route("/")
+def index():
+    return "Welcome to Billz-OCR-Server!"
 
 
 @app.route("/uploadFile", methods=['POST'])
@@ -38,4 +27,4 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8055)
+    app.run(host='0.0.0.0', port=os.environ["PORT"])

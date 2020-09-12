@@ -2,3 +2,4 @@ pdfs/
 *.jpg
 *.pdf
 .idea/
+set_heroku_build_packs
