@@ -1,5 +1,5 @@
 jinja2
-Flask
+flask
 tesserocr
 pytesseract
 pdf2image
