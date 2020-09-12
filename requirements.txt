@@ -1,3 +1,4 @@
+gunicorn
 jinja2
 Flask
 tesserocr
