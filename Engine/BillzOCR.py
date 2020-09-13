@@ -9,7 +9,7 @@ from Engine.ocr_helper import *
 from Engine.bills_parser import *
 import os
 
-VERSION = "1.0.1"
+VERSION = "1.0.2"
 
 supported_ext = [
     '.jpg',
@@ -19,6 +19,7 @@ supported_ext = [
 
 tesseract_path = "resources/"  # "/usr/local/Cellar/tesseract/4.1.1/share/tessdata/"
 debug = False
+debug = True
 
 
 def debug_log(msg):
@@ -66,20 +67,21 @@ def preprocess_image(image, output_name):
     return img_filtered
 
 
-def crop_price(im):
+def crop_price(im, bill_type):
     width, height = im.size
 
     #print("w:", width, "h:", height)
 
-    left = width * 0.392 #650
-    top = height * 0.491 #1150
-    right = width - left
-    bottom = height - top + (height * 0.012)
-
-    left = width * 0.37 #650
-    top = height * 0.45 #1150
-    right = width - left
-    bottom = height - top + (height * 0.012)
+    if bill_type == BillType.Electricity    :
+        left = width * 0.37 #650
+        top = height * 0.45 #1150
+        right = width - left
+        bottom = height - top + (height * 0.012)
+    if bill_type == BillType.Arnona_TelAviv:
+        left = width * 0.25 #650
+        top = height * 0.35
+        right = width * 0.45
+        bottom = height * 0.40
 
     # Setting the points for cropped image
     #left = 650
@@ -108,19 +110,19 @@ def main():
     # if the file is pdf file
     if file_extension == ".pdf":
         image = extract_firstpage_from_pdf(input_name)
+    else:
+        image = Image.open(input_name)
 
-    image = Image.open(input_name)
     processed_image = preprocess_image(image, filename)
-
-    bill_type = get_bill_type(image)
+    bill_type = get_bill_type(processed_image)
 
     output_name = filename + "_out.txt"
     # read_details(image, bill_type, output_name)
 
     output_name = filename + "_m_out.txt"
-    client_id, date = read_details(processed_image, bill_type, output_name)
+    client_id, date = read_details(processed_image, bill_type)
 
-    price_img = crop_price(processed_image)
+    price_img = crop_price(processed_image, bill_type)
     price = read_price(price_img)
 
     debug_log("Done!")
@@ -234,4 +236,3 @@ def process_file(file_path):
 
 if __name__ == '__main__':
     main()
-
