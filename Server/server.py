@@ -28,7 +28,7 @@ def upload_file():
     result = process_file(file_name)
     res = Response()
     res.data = result
-    res.headers.set('Access-Control-Allow-Origin', 'https://billz-app.herokuapp.com/*')
+    res.headers.set('Access-Control-Allow-Origin', '*')
     return res
 
 
