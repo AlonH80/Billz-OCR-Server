@@ -25,10 +25,10 @@ def upload_file():
     form = request.form.get("cycle_billing"), request.form.get("bill_type")
     file_name = "{}/{}".format(os.getcwd(), file.filename)
     file.save(file_name)
-    process_file(file_name)
+    result = process_file(file_name)
     res = Response()
-    res.data = {"status": "ok"}
-    res.headers.set('Access-Control-Allow-Origin', '*')
+    res.data = result
+    res.headers.set('Access-Control-Allow-Origin', 'https://billz-app.herokuapp.com/*')
     return res
 
 
