@@ -39,6 +39,7 @@ def upload_file():
     proc_thread.start()
     #result = process_file(file_name)
     #print("Processing file {} done, send back response".format(file_name))
+    print("send back response..")
     res = Response()
     res.data = {"pendingId": request_id}
     res.headers.set('Access-Control-Allow-Origin', '*')
