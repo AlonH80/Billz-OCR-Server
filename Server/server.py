@@ -7,6 +7,7 @@ import os
 from Engine.BillzOCR import process_file, pending_queue
 import random
 from threading import Thread
+import json
 
 
 root_folder = getcwd() + "/"
@@ -41,7 +42,7 @@ def upload_file():
     #print("Processing file {} done, send back response".format(file_name))
     print("send back response..")
     res = Response()
-    res.data = {"pendingId": request_id}
+    res.data = json.dumps({"pendingId": request_id})
     res.headers.set('Access-Control-Allow-Origin', '*')
     return res
 
