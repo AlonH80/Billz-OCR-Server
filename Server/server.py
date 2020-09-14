@@ -23,6 +23,9 @@ def index():
 
 @app.route("/<pending_id>")
 def check_status(pending_id):
+    if pending_id not in pending_queue.keys():
+        return ""
+    print("{} status: {}".format(pending_id, pending_queue[pending_id]))
     return pending_queue[pending_id]
 
 
