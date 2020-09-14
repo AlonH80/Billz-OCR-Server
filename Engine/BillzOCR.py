@@ -72,7 +72,7 @@ def crop_price(im, bill_type):
 
     #print("w:", width, "h:", height)
 
-    if bill_type == BillType.Electricity    :
+    if bill_type == BillType.Electricity:
         left = width * 0.37 #650
         top = height * 0.45 #1150
         right = width - left

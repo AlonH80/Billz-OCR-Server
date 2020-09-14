@@ -13,7 +13,10 @@ app = Flask(__name__, root_path=root_folder, static_url_path=root_folder)
 
 @app.route("/")
 def index():
-    return "Welcome to Billz-OCR-Server!"
+    res = Response()
+    res.data = "Welcome to Billz-OCR-Server!"
+    res.headers.set('Access-Control-Allow-Origin', '*')
+    return res
 
 
 @app.route("/uploadFile", methods=['POST'])
@@ -23,8 +26,12 @@ def upload_file():
     file_name = "{}/{}".format(os.getcwd(), file.filename)
     file.save(file_name)
     process_file(file_name)
-    return {"status": "ok"}
+    res = Response()
+    res.data = {"status": "ok"}
+    res.headers.set('Access-Control-Allow-Origin', '*')
+    return res
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=os.environ["PORT"])
+    port = os.environ.get("PORT") or 5000
+    app.run(host='0.0.0.0', port=port)
