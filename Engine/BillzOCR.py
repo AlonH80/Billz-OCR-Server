@@ -199,26 +199,27 @@ def read_details(image, billtype, output_name=""):
 
 
 def process_file(file_path):
-    filename, file_extension = os.path.splitext(file_path)
+    input_name = file_path
+    filename, file_extension = os.path.splitext(input_name)
     if file_extension not in supported_ext:
         raise ValueError(f'Unsupported file type - {supported_ext}')
 
     # if the file is pdf file
     if file_extension == ".pdf":
-        image = extract_firstpage_from_pdf(file_path)
+        image = extract_firstpage_from_pdf(input_name)
+    else:
+        image = Image.open(input_name)
 
-    image = Image.open(file_path)
     processed_image = preprocess_image(image, filename)
-
-    bill_type = get_bill_type(image)
+    bill_type = get_bill_type(processed_image)
 
     output_name = filename + "_out.txt"
     # read_details(image, bill_type, output_name)
 
     output_name = filename + "_m_out.txt"
-    client_id, date = read_details(processed_image, bill_type, output_name)
+    client_id, date = read_details(processed_image, bill_type)
 
-    price_img = crop_price(processed_image)
+    price_img = crop_price(processed_image, bill_type)
     price = read_price(price_img)
 
     debug_log("Done!")
