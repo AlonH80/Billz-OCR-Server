@@ -23,10 +23,13 @@ def index():
 
 @app.route("/<pending_id>")
 def check_status(pending_id):
-    if pending_id not in pending_queue.keys():
-        return ""
     print("{} status: {}".format(pending_id, pending_queue[pending_id]))
-    return pending_queue[pending_id]
+    res = Response()
+    res.data = ""
+    res.headers.set('Access-Control-Allow-Origin', '*')
+    if pending_id in pending_queue.keys():
+        res.data = pending_queue[pending_id]
+    return res
 
 
 @app.route("/uploadFile", methods=['POST'])
