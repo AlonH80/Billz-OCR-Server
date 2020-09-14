@@ -18,8 +18,9 @@ supported_ext = [
 ]
 
 tesseract_path = "resources/"  # "/usr/local/Cellar/tesseract/4.1.1/share/tessdata/"
-debug = False
+#debug = False
 debug = True
+pending_queue= dict()
 
 
 def debug_log(msg):
@@ -198,7 +199,9 @@ def read_details(image, billtype, output_name=""):
                   "confidence: {1}, text: {2}".format(i, conf, ocrResult, **box))
 
 
-def process_file(file_path):
+def process_file(file_path, requestId):
+    global pending_queue
+    pending_queue[requestId] = ""
     input_name = file_path
     filename, file_extension = os.path.splitext(input_name)
     if file_extension not in supported_ext:
@@ -232,7 +235,7 @@ def process_file(file_path):
     }
 
     print(json.dumps(result))
-
+    pending_queue[requestId] = json.dumps(result)
     return json.dumps(result)
 
 if __name__ == '__main__':

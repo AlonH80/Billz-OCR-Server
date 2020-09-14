@@ -4,12 +4,13 @@ from os.path import isdir, isfile, abspath
 import jinja2 as jin
 import base64
 import os
-from Engine.BillzOCR import process_file
+from Engine.BillzOCR import process_file, pending_queue
+import random
+from threading import Thread
 
 
 root_folder = getcwd() + "/"
 app = Flask(__name__, root_path=root_folder, static_url_path=root_folder)
-
 
 @app.route("/")
 def index():
@@ -17,6 +18,11 @@ def index():
     res.data = "Welcome to Billz-OCR-Server!"
     res.headers.set('Access-Control-Allow-Origin', '*')
     return res
+
+
+@app.route("/<pending_id>")
+def check_status(pending_id):
+    return pending_queue[pending_id]
 
 
 @app.route("/uploadFile", methods=['POST'])
@@ -27,13 +33,23 @@ def upload_file():
     file_name = "{}/{}".format(os.getcwd(), file.filename)
     print("Save file: {}".format(file_name))
     file.save(file_name)
+    request_id = generate_random_ids()
     print("Processing file {}".format(file_name))
-    result = process_file(file_name)
-    print("Processing file {} done, send back response".format(file_name))
+    proc_thread = Thread(target=process_file, args=[file_name, request_id])
+    proc_thread.start()
+    #result = process_file(file_name)
+    #print("Processing file {} done, send back response".format(file_name))
     res = Response()
-    res.data = result
+    res.data = {"pendingId": request_id}
     res.headers.set('Access-Control-Allow-Origin', '*')
     return res
+
+
+def generate_random_ids():
+    rand_num = "%06d" % random.randint(0, 1000000)
+    while rand_num in pending_queue.keys():
+        rand_num = "%06d" % random.randint(0, 1000000)
+    return rand_num
 
 
 if __name__ == '__main__':
