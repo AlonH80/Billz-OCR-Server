@@ -22,10 +22,14 @@ def index():
 @app.route("/uploadFile", methods=['POST'])
 def upload_file():
     file = request.files["billFile"]
-    form = request.form.get("cycle_billing"), request.form.get("bill_type")
+    bill_type = request.form.get("bill_type")
+    # form = request.form.get("cycle_billing"), request.form.get("bill_type")
     file_name = "{}/{}".format(os.getcwd(), file.filename)
+    print("Save file: {}".format(file_name))
     file.save(file_name)
+    print("Processing file {}".format(file_name))
     result = process_file(file_name)
+    print("Processing file {} done, send back response".format(file_name))
     res = Response()
     res.data = result
     res.headers.set('Access-Control-Allow-Origin', '*')
