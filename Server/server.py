@@ -24,6 +24,8 @@ def index():
 
 @app.route("/<pending_id>")
 def check_status(pending_id):
+    global running_threads
+    print(running_threads)
     print("{} status: {}".format(pending_id, pending_queue[pending_id]))
     print("tid #{} alive: {}".format(pending_id, running_threads[pending_id].is_alive()))
     res = Response()
@@ -68,6 +70,7 @@ def start_process_file_thread(file_name):
     proc_thread = Thread(target=process_file, args=[file_name])
     proc_thread.start()
     running_threads.__setitem__(proc_thread.ident.__str__(), proc_thread)
+    print(running_threads)
     return proc_thread.ident.__str__()
 
 def generate_random_ids():
