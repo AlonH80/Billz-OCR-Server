@@ -202,7 +202,8 @@ def read_details(image, billtype, output_name=""):
 
 def process_file(file_path):
     global pending_queue
-    pending_queue[threading.get_ident()] = ""
+    requestId = threading.get_ident()
+    pending_queue[requestId] = ""
     input_name = file_path
     filename, file_extension = os.path.splitext(input_name)
     if file_extension not in supported_ext:
