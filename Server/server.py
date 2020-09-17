@@ -35,11 +35,11 @@ def check_status(pending_id):
         res.data = pending_queue[pending_id]
         if res.data == "" and not running_threads[pending_id].is_alive():
             res = json.dumps({"status": "fail"})
-            pending_queue.pop(pending_id)
-            running_threads.pop(pending_id)
-        elif res.data != "":
-            pending_queue.pop(pending_id)
-            running_threads.pop(pending_id)
+            # pending_queue.pop(pending_id)
+            # running_threads.pop(pending_id)
+        # elif res.data != "":
+        #     pending_queue.pop(pending_id)
+        #     running_threads.pop(pending_id)
     else:
         res = json.dumps({"status": "fail"})
     return res
