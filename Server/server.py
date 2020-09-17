@@ -12,6 +12,7 @@ import json
 
 root_folder = getcwd() + "/"
 app = Flask(__name__, root_path=root_folder, static_url_path=root_folder)
+running_threads = dict()  # type: dict
 
 @app.route("/")
 def index():
@@ -24,11 +25,21 @@ def index():
 @app.route("/<pending_id>")
 def check_status(pending_id):
     print("{} status: {}".format(pending_id, pending_queue[pending_id]))
+    print("tid #{} alive: {}".format(pending_id, running_threads[pending_id].is_alive()))
     res = Response()
     res.data = ""
     res.headers.set('Access-Control-Allow-Origin', '*')
     if pending_id in pending_queue.keys():
         res.data = pending_queue[pending_id]
+        if res.data == "" and not running_threads[pending_id].is_alive():
+            res = json.dumps({"status": "fail"})
+            pending_queue.pop(pending_id)
+            running_threads.pop(pending_id)
+        elif res.data != "":
+            pending_queue.pop(pending_id)
+            running_threads.pop(pending_id)
+    else:
+        res = json.dumps({"status": "fail"})
     return res
 
 
@@ -40,18 +51,24 @@ def upload_file():
     file_name = "{}/{}".format(os.getcwd(), file.filename)
     print("Save file: {}".format(file_name))
     file.save(file_name)
-    request_id = generate_random_ids()
+    #request_id = generate_random_ids()
     print("Processing file {}".format(file_name))
-    proc_thread = Thread(target=process_file, args=[file_name, request_id])
-    proc_thread.start()
+    proc_id = start_process_file_thread(file_name)
     #result = process_file(file_name)
     #print("Processing file {} done, send back response".format(file_name))
     print("send back response..")
     res = Response()
-    res.data = json.dumps({"pendingId": request_id})
+    res.data = json.dumps({"pendingId": proc_id})
     res.headers.set('Access-Control-Allow-Origin', '*')
     return res
 
+
+def start_process_file_thread(file_name):
+    global running_threads
+    proc_thread = Thread(target=process_file, args=[file_name])
+    proc_thread.start()
+    running_threads.__setitem__(proc_thread.ident, proc_thread)
+    return proc_thread.ident
 
 def generate_random_ids():
     rand_num = "%06d" % random.randint(0, 1000000)

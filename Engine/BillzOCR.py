@@ -8,6 +8,7 @@ import sys
 from Engine.ocr_helper import *
 from Engine.bills_parser import *
 import os
+import threading
 
 VERSION = "1.0.2"
 
@@ -199,9 +200,9 @@ def read_details(image, billtype, output_name=""):
                   "confidence: {1}, text: {2}".format(i, conf, ocrResult, **box))
 
 
-def process_file(file_path, requestId):
+def process_file(file_path):
     global pending_queue
-    pending_queue[requestId] = ""
+    pending_queue[threading.get_ident()] = ""
     input_name = file_path
     filename, file_extension = os.path.splitext(input_name)
     if file_extension not in supported_ext:
