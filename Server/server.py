@@ -67,8 +67,8 @@ def start_process_file_thread(file_name):
     global running_threads
     proc_thread = Thread(target=process_file, args=[file_name])
     proc_thread.start()
-    running_threads.__setitem__(proc_thread.ident, proc_thread)
-    return proc_thread.ident
+    running_threads.__setitem__(proc_thread.ident.__str__(), proc_thread)
+    return proc_thread.ident.__str__()
 
 def generate_random_ids():
     rand_num = "%06d" % random.randint(0, 1000000)
